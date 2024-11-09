@@ -1,6 +1,7 @@
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import FieldSet from "../components/FieldSet";
 import Field from "../components/Field";
+import NumberInput from "../components/NumberInput";
 
 const RegistrationForm = () => {
   const {
@@ -8,7 +9,9 @@ const RegistrationForm = () => {
     handleSubmit,
     formState: { errors },
     control,
+    reset,
   } = useForm();
+
   const { fields, append, remove } = useFieldArray({
     name: "socials",
     control,
@@ -16,6 +19,8 @@ const RegistrationForm = () => {
 
   const submitForm = (formData) => {
     console.log(formData);
+
+    reset({ ...formData, fName: "", email: "", password: "", age: "16" });
   };
   return (
     <div className="flex justify-center items-center">
@@ -37,9 +42,11 @@ const RegistrationForm = () => {
           </Field>
 
           <Field label="Age" error={errors.age}>
-            <input
-              {...register("age", {
-                required: "Age is required.",
+            <Controller
+              name="age"
+              control={control}
+              defaultValue={16}
+              rules={{
                 max: {
                   value: 100,
                   message: "Age must be between 16 - 100",
@@ -48,16 +55,18 @@ const RegistrationForm = () => {
                   value: 16,
                   message: "You are Little",
                 },
-              })}
-              className={`border w-[300px] rounded-sm px-5 py-3 outline-teal-500 ${
-                errors.age
-                  ? "placeholder:text-red-500 border-red-500 focus:outline-red-500"
-                  : "border-gray-200"
-              }`}
-              type="number"
-              name="age"
-              id="age"
-              placeholder="Enter Your ageage"
+              }}
+              render={({ field: { ref, ...fields } }) => (
+                <NumberInput
+                  {...fields}
+                  placeholder="Enter Your age"
+                  className={`border w-[300px] rounded-sm px-5 py-3 outline-teal-500 ${
+                    errors.age
+                      ? "placeholder:text-red-500 border-red-500 focus:outline-red-500"
+                      : "border-gray-200"
+                  }`}
+                />
+              )}
             />
           </Field>
           <Field label="Email" error={errors.email}>
@@ -115,14 +124,14 @@ const RegistrationForm = () => {
                   placeholder="Enter Your Social Name"
                 />
               </Field>
-              <Field label="Social Link">
+              <Field label="Social URL">
                 <input
-                  {...register(`socials[${index}].link`)}
+                  {...register(`socials[${index}].url`)}
                   className="p-2 border box-border w-[145px] rounded-md"
                   type="text"
-                  name={`socials[${index}].link`}
-                  id={`socials[${index}].link`}
-                  placeholder="Enter Your Social link"
+                  name={`socials[${index}].url`}
+                  id={`socials[${index}].url`}
+                  placeholder="Enter Your Social Url"
                 />
               </Field>
               <button
